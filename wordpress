@@ -1,0 +1,131 @@
+{
+  "variables": {
+    "triton_url": "{{env `SDC_URL`}}",
+    "triton_account": "{{env `SDC_ACCOUNT`}}",
+    "triton_key_id": "{{env `SDC_KEY_ID`}}",
+    "version_suffix": "-{{timestamp}}"
+  },
+  "builders": [
+    {
+      "name": "triton",
+      "type": "triton",
+      "triton_url": "{{user `triton_url`}}",
+      "triton_account": "{{user `triton_account`}}",
+      "triton_key_id": "{{user `triton_key_id`}}",
+      "source_machine_name": "image-builder",
+      "source_machine_package": "sample-1G",
+      "source_machine_image_filter": {
+        "name": "base-64-lts",
+        "most_recent": "true"
+      },
+      "ssh_username": "root",
+      "image_name": "wordpress",
+      "image_version": "0.0.1{{user `version_suffix`}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "echo Installing apache24; pkgin -y install apache;"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "echo installing php72 and libs; pkgin -y install ap24-php72 php72-bz2 php72-calendar php72-curl php72-gettext php72-imagick php72-json php72-mysqli php72-oauth php72-pdo php72-pdo_mysql php72-zlib php72-mbstring php72-iconv php72-intl php72-apcu php72-zip php72-bz2 php72-ldap php72-gd"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "apache.files/httpd.conf.php72.patch",
+      "destination": "/opt/local/etc/httpd/"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "echo patching apache config to enable prefork and php modules",
+        "cd /opt/local/etc/httpd/",
+        "patch < httpd.conf.php72.patch"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "echo enabling apache; svcadm enable apache"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "pkgin -y install mysql-server",
+        "echo enabling mysql; svcadm enable mysql",
+        "sleep 5",
+        "echo securing mysql",
+        "/opt/local/bin/mysql -u root -e \"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');\"",
+        "/opt/local/bin/mysql -u root -e \"DELETE FROM mysql.user WHERE User='';\"",
+        "/opt/local/bin/mysql -u root -e \"DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';\"",
+        "/opt/local/bin/mysql -u root -e \"FLUSH PRIVILEGES;\""
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "useradd -s /bin/bash -m -k /etc/skel node",
+        "passwd -d node",
+        "mkdir /home/node/website",
+        "chown -R node:www /home/node/website",
+        "chmod g+s -R /home/node/website",
+        "cd /opt/local/etc/httpd; sed -i 's#/opt/local/share/httpd/htdocs#/home/node/website#' httpd.conf"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "echo Installing wordpress",
+        "cd /home/node/; rm -rf website;wget https://wordpress.org/latest.tar.gz; /usr/bin/tar -xzvf latest.tar.gz; mv wordpress website",
+        "chown -R node:www /home/node/website",
+        "chmod g+s -R /home/node/website",
+        "cd /home/node; curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; chmod +x wp-cli.phar; mv wp-cli.phar /opt/local/bin/wp;",
+        "/opt/local/bin/mysql -u root -e \"CREATE DATABASE wordpress;\nGRANT ALL PRIVILEGES ON wordpress.* to 'username'@'localhost' IDENTIFIED BY 'password';\n FLUSH PRIVILEGES;\"",
+        "cd /home/node/website; wp config create --dbname=wordpress --dbuser=username --dbpass=password --dbhost=localhost "
+      ]
+    },
+    {
+      "type": "file",
+      "source": "vendor/ruby-theme",
+      "destination": "/home/node/website/wp-content/themes/"
+    },
+    {
+      "type": "file",
+      "source": "vendor/wp-accessibility.1.6.4.zip",
+      "destination": "/home/node/"
+    },
+    {
+      "type": "file",
+      "source": "config/56-configure-wordpress-local.sh",
+      "destination": "/var/zoneinit/includes/"
+    },
+    {
+      "type": "file",
+      "source": "AutoUpdateWordpress.sh",
+      "destination": "/home/node/"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "echo permission cleanup",
+        "chown -R node:other /home/node",
+        "chown -R node:www /home/node/website",
+        "chmod g+s -R /home/node/website",
+        "su node -c 'cat <(crontab -l) <(echo \"3 10 * * * /home/node/AutoUpdateWordpress.sh >> autoupdatelog.log\") | crontab'"
+      ]
+    },
+    {
+      "type": "shell", "inline": [
+        "echo DONE" 
+      ]
+    }
+
+  ]
+}
