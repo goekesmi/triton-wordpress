@@ -1,0 +1,37 @@
+#!/usr/bin/bash
+# Process to backup wordpress to a manta object storage server
+
+# Assumes you have a valid set of MANTA environment variables for this to work
+
+export INSTANCE_SHORTNAME=`/usr/sbin/mdata-get sdc:uuid | cut -f 1 -d -`
+# This generates a likely unique directory per instance you are running
+# It exists so that if you do a restore of your data, the whole point of
+# backups, and then the restored running instance takes a backup, it doesn't
+# land on the original's backup directory.
+
+
+cd /home/node/website 
+
+MYSQLDUMP=`which mysqldump`
+
+if [ $? -ne 0 ] 
+then 
+        echo "no mysqldump found. exiting"; 
+        exit 1;  
+fi;
+
+mmkdir -p ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/
+# Dump the DB, put the dump in manta
+
+$MYSQLDUMP -h localhost -u username --password=password wordpress --single-transaction --quick --lock-tables=false | gzip | mput ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/`date +%s_%Y_%m_%d`.database.sql.gz || exit 1;
+
+tar -cf - /home/node/website | gzip | mput ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/`date +%s_%Y_%m_%d`.website.tar.gz || exit 1;
+
+# prepare manta for the media objects tree
+#mmkdir -p ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/website/
+
+# sync the media objects into manta
+#manta-sync /home/node/website/ ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/website/
+
+
+

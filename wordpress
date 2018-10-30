@@ -108,6 +108,11 @@
     },
     {
       "type": "file",
+      "source": "manta-backup",
+      "destination": "/opt/local/sbin/"
+    },
+    {
+      "type": "file",
       "source": "AutoUpdateWordpress.sh",
       "destination": "/home/node/"
     },
