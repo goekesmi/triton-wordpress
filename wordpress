@@ -20,7 +20,7 @@
       },
       "ssh_username": "root",
       "image_name": "wordpress",
-      "image_version": "0.0.1{{user `version_suffix`}}"
+      "image_version": "4.9.8{{user `version_suffix`}}"
     }
   ],
   "provisioners": [
