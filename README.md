@@ -8,7 +8,7 @@ easier.
 I maintain a built version of this image on the Joyent Public Cloud.
 I can't mark it as public, but I can add you as a user of the image.
 If you would like to be added, please send jeff+triton-wordpress@goekesmi.com
-an email with your JPC uuid.
+an email with your JPC account uuid.
 
 ## I want to build my own image
 ### Prerequsites
