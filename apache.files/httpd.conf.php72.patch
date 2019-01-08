@@ -1,5 +1,14 @@
---- httpd.conf.orig     2018-02-01 20:14:27.199360839 +0000
-+++ httpd.conf  2018-02-01 20:15:43.731366020 +0000
+--- httpd.conf.orig     2019-01-08 01:38:53.948598948 +0000
++++ httpd.conf  2019-01-08 01:41:52.211048049 +0000
+@@ -49,7 +49,7 @@
+ # prevent Apache from glomming onto all bound IP addresses.
+ #
+ #Listen 12.34.56.78:80
+-Listen 0.0.0.0:80
++Listen 0.0.0.0:8080
+ 
+ #
+ # Dynamic Shared Object (DSO) Support
 @@ -63,8 +63,8 @@
  # Example:
  # LoadModule foo_module modules/mod_foo.so
@@ -11,7 +20,7 @@
  #LoadModule mpm_worker_module lib/httpd/mod_mpm_worker.so
  LoadModule authn_file_module lib/httpd/mod_authn_file.so
  #LoadModule authn_dbm_module lib/httpd/mod_authn_dbm.so
-@@ -170,7 +170,8 @@
+@@ -171,7 +171,8 @@
  #LoadModule speling_module lib/httpd/mod_speling.so
  #LoadModule userdir_module lib/httpd/mod_userdir.so
  LoadModule alias_module lib/httpd/mod_alias.so
@@ -21,16 +30,16 @@
  
  <IfModule unixd_module>
  #
-@@ -257,7 +258,7 @@
+@@ -258,7 +259,7 @@
      # It can be "All", "None", or any combination of the keywords:
      #   AllowOverride FileInfo AuthConfig Limit
      #
-+    AllowOverride All
 -    AllowOverride None
++    AllowOverride All
  
      #
      # Controls who can get stuff from this server.
-@@ -270,7 +271,7 @@
+@@ -271,7 +272,7 @@
  # is requested.
  #
  <IfModule dir_module>
@@ -39,7 +48,7 @@
  </IfModule>
  
  #
-@@ -523,3 +524,6 @@
+@@ -524,3 +525,6 @@
  SSLRandomSeed connect builtin
  </IfModule>
  
