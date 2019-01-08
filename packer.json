@@ -25,6 +25,16 @@
   ],
   "provisioners": [
     {
+      "type": "shell", "inline": [
+        "echo update pkgsrc; pkgin update ",
+        "echo installing make gcc; pkgin -y install gmake gcc49",
+        "echo installing git; pkgin -y install git",
+        "echo installing node; pkgin -y install nodejs",
+        "echo update node; npm i npm@latest -g",
+        "echo installing triton and manta; npm install -g --unsafe-perm triton manta"
+      ]
+    },
+    {
       "type": "shell",
       "inline": [
         "echo Installing apache24; pkgin -y install apache;"
@@ -98,12 +108,51 @@
     },
     {
       "type": "file",
+      "source": "haproxy.files/manta-backup.sh",
+      "destination": "/opt/local/bin/manta-backup"
+    },
+    {
+      "type": "file",
+      "source": "haproxy.files/haproxy-cert-zoneinit.sh",
+      "destination": "/var/zoneinit/includes/56-haproxy-cert-zoneinit.sh"
+    },
+    {
+      "type": "file",
+      "source": "haproxy.files/acme-get-cert.sh",
+      "destination": "/opt/local/bin/acme-get-cert"
+    },
+    {
+      "type": "file",
+      "source": "haproxy.files/haproxy.cfg",
+      "destination": "/opt/local/etc/"
+    },
+    {
+      "type": "file",
+      "source": "haproxy.files/rsyslog.conf",
+      "destination": "/opt/local/etc/rsyslog.conf"
+    },
+    {
+      "type": "shell", "inline": [
+        "mkdir /opt/local/etc/certs/",
+        "echo installing haproxy; pkgin -y install haproxy",
+        "echo enabling haproxy; svcadm enable haproxy",
+        "echo installing hatop; pkgin -y install py27-hatop",
+        "echo installing acme.sh; cd /root; curl https://get.acme.sh | sh"
+      ]
+    },
+    {
+      "type": "file",
       "source": "manta-backup",
       "destination": "/opt/local/sbin/"
     },
     {
       "type": "file",
       "source": "AutoUpdateWordpress.sh",
+      "destination": "/home/node/"
+    },
+    {
+      "type": "file",
+      "source": "wp-add-tls-config.sh",
       "destination": "/home/node/"
     },
     {
