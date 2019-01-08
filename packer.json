@@ -12,7 +12,7 @@
       "triton_url": "{{user `triton_url`}}",
       "triton_account": "{{user `triton_account`}}",
       "triton_key_id": "{{user `triton_key_id`}}",
-      "source_machine_name": "image-builder",
+      "source_machine_name": "ib-wordpress-{{uuid}}",
       "source_machine_package": "g4-highcpu-1G",
       "source_machine_image_filter": {
         "name": "base-64-lts",

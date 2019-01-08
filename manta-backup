@@ -9,6 +9,8 @@ export INSTANCE_SHORTNAME=`/usr/sbin/mdata-get sdc:uuid | cut -f 1 -d -`
 # backups, and then the restored running instance takes a backup, it doesn't
 # land on the original's backup directory.
 
+export TIME=`date +%s_%Y_%m_%d`
+
 
 cd /home/node/website 
 
@@ -21,11 +23,14 @@ then
 fi;
 
 mmkdir -p ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/
+
+# Collect the haproxy configuration, put it in manta
+tar -cz /root/.acme.sh/ /opt/local/etc/certs /opt/local/etc/haproxy.cfg | mput ~~/stor/backups/wordpress/${INSTANCE_SHORTNAME:?}/${TIME:?}.haproxy.config.tgz || exit 1;
+
 # Dump the DB, put the dump in manta
+$MYSQLDUMP -h localhost -u username --password=password wordpress --single-transaction --quick --lock-tables=false | gzip | mput ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/${TIME:?}.database.sql.gz || exit 1;
 
-$MYSQLDUMP -h localhost -u username --password=password wordpress --single-transaction --quick --lock-tables=false | gzip | mput ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/`date +%s_%Y_%m_%d`.database.sql.gz || exit 1;
-
-tar -cf - /home/node/website | gzip | mput ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/`date +%s_%Y_%m_%d`.website.tar.gz || exit 1;
+tar -cf - /home/node/website | gzip | mput ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/${TIME:?}.website.tar.gz || exit 1;
 
 # prepare manta for the media objects tree
 #mmkdir -p ~~/stor/backups/wordpress/$INSTANCE_SHORTNAME/website/
