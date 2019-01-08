@@ -1,7 +1,8 @@
 # Prerequsites
 
 The below instructions assume you have the triton command line tooling
-in place, and have that working
+in place, and have that working in addition to the packer tool from
+packer.io
 
 # Build the image
 `packer build packer.json`
@@ -26,8 +27,10 @@ it can't be configured to use it until the inital configuration is done.
 
 Run the following commands to use the utility script to configure tls in
 wordpress.
-`triton ssh node@wordpress`
-`[node@5fbe319d ~]$ ./wp-add-tls-config.sh `
+```
+triton ssh node@wordpress
+./wp-add-tls-config.sh 
+```
 
 # Getting a real cert
 Hilariously invalid cert is annoyingly useless.
