@@ -20,7 +20,7 @@
       },
       "ssh_username": "root",
       "image_name": "triton-wordpress",
-      "image_version": "5.0.0{{user `version_suffix`}}"
+      "image_version": "5.0.2{{user `version_suffix`}}"
     }
   ],
   "provisioners": [
