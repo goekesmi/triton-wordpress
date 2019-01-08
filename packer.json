@@ -108,11 +108,6 @@
     },
     {
       "type": "file",
-      "source": "haproxy.files/manta-backup.sh",
-      "destination": "/opt/local/bin/manta-backup"
-    },
-    {
-      "type": "file",
       "source": "haproxy.files/haproxy-cert-zoneinit.sh",
       "destination": "/var/zoneinit/includes/56-haproxy-cert-zoneinit.sh"
     },
