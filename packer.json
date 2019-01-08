@@ -13,14 +13,14 @@
       "triton_account": "{{user `triton_account`}}",
       "triton_key_id": "{{user `triton_key_id`}}",
       "source_machine_name": "image-builder",
-      "source_machine_package": "sample-1G",
+      "source_machine_package": "g4-highcpu-1G",
       "source_machine_image_filter": {
         "name": "base-64-lts",
         "most_recent": "true"
       },
       "ssh_username": "root",
-      "image_name": "wordpress",
-      "image_version": "4.9.8{{user `version_suffix`}}"
+      "image_name": "triton-wordpress",
+      "image_version": "5.0.0{{user `version_suffix`}}"
     }
   ],
   "provisioners": [
@@ -90,16 +90,6 @@
         "/opt/local/bin/mysql -u root -e \"CREATE DATABASE wordpress;\nGRANT ALL PRIVILEGES ON wordpress.* to 'username'@'localhost' IDENTIFIED BY 'password';\n FLUSH PRIVILEGES;\"",
         "cd /home/node/website; wp config create --dbname=wordpress --dbuser=username --dbpass=password --dbhost=localhost "
       ]
-    },
-    {
-      "type": "file",
-      "source": "vendor/ruby-theme",
-      "destination": "/home/node/website/wp-content/themes/"
-    },
-    {
-      "type": "file",
-      "source": "vendor/wp-accessibility.1.6.4.zip",
-      "destination": "/home/node/"
     },
     {
       "type": "file",
