@@ -147,6 +147,11 @@
     },
     {
       "type": "file",
+      "source": "wp-disable-onboard-cron.sh",
+      "destination": "/home/node/"
+    },
+    {
+      "type": "file",
       "source": "wp-add-tls-config.sh",
       "destination": "/home/node/"
     },
@@ -157,7 +162,8 @@
         "chown -R node:other /home/node",
         "chown -R node:www /home/node/website",
         "chmod g+s -R /home/node/website",
-        "su node -c 'cat <(crontab -l) <(echo \"3 10 * * * /home/node/AutoUpdateWordpress.sh >> autoupdatelog.log\") | crontab'"
+        "su node -c 'cat <(crontab -l) <(echo \"3 10 * * * /home/node/AutoUpdateWordpress.sh >> autoupdatelog.log\") | crontab'",
+        "su node -c 'cat <(crontab -l) <(echo \"0,10,20,30,40,50 * * * * cd /home/node/website; wp cron event run --due-now > /dev/null 2>&1 \") | crontab'"
       ]
     },
     {

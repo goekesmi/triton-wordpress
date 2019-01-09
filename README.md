@@ -27,6 +27,14 @@ packer.io
 ### Make a wordpress instance
 `triton instance create -n wordpress triton-wordpress g4-highcpu-512M`
 
+#### Package Selection
+So, how small of a machine can you run this image on.  The memory footprint of
+the image is about 500M.  I can get the image to start on a 256M instance, but
+it is very, very slow, because half of the memory is swapped out to disk.  
+Perhaps you don't mind the performance being measured in seconds.  I do. Use
+images with at least 512M of memory.  You'll probably want that for the disk
+space for your media anyway if you are on JPC.
+
 ### Make a domain name point at your instance
 `triton instance get wordpress | json primaryIp`
 gives you the IP address of the instance once the instance is up and running
