@@ -10,6 +10,10 @@ I can't mark it as public, but I can add you as a user of the image.
 If you would like to be added, please send jeff+triton-wordpress@goekesmi.com
 an email with your JPC account uuid.
 
+You can get your account uuid from the triton command line tools with
+`triton account get -j | json id` .  You can also get it from your invoices
+which can be found at https://my.joyent.com/main/#!/account .
+
 ## I want to build my own image
 ### Prerequsites
 The below instructions assume you have the triton command line tooling
